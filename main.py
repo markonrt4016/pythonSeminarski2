@@ -49,10 +49,15 @@ def ispisiAD_dodatnibit(a, d, dodatniBit, brBita):
     # print(dodatniBit)
     # listaPoruka.append(dodatniBit)
 
+
 def pisiRezultat():
     global listaPoruka
+
+    canvas.delete("all")
+
     for i in range(len(listaPoruka)):
         canvas.create_text(20, 10 * (i + 1), text=listaPoruka[i], anchor=tk.W, font=('Courier', 12))
+    listaPoruka.clear()
 
 def kalkulisi():
     C = 255
@@ -60,9 +65,11 @@ def kalkulisi():
     A = 0
     dodatniBit = 0
 
-    global dVar, cVar
+    global dVar, cVar, rezultat
     C = int(cVar.get())
     D = int(dVar.get())
+
+    rezultat.set(str(C * D))
 
     brBita = max([vratiMinBita(C), vratiMinBita(D)])
 
@@ -120,24 +127,33 @@ def kalkulisi():
 import tkinter as tk
 
 root = tk.Tk()
-root.geometry("600x400")
+root.geometry("1200x600")
+root.option_add("*Font", ('Courier', 12))
+frmCalculate = tk.Frame()
 
 cVar = tk.StringVar()
-txtC = tk.Entry(root, textvariable=cVar)
+txtC = tk.Entry(frmCalculate, textvariable=cVar)
 
 dVar = tk.StringVar()
-txtD = tk.Entry(root, textvariable=dVar)
+txtD = tk.Entry(frmCalculate, textvariable=dVar)
 
-txtC.pack()
-txtD.pack()
+txtC.pack(side=tk.LEFT)
+tk.Label(frmCalculate,text="x").pack(side=tk.LEFT)
+txtD.pack(side=tk.LEFT)
 
-btnIzracunaj = tk.Button(root, text="Izracunaj", command = kalkulisi)
-btnIzracunaj.pack()
+tk.Label(frmCalculate,text="=").pack(side=tk.LEFT)
 
+rezultat = tk.StringVar()
+lblRezultat = tk.Label(frmCalculate, textvariable=rezultat)
+lblRezultat.pack(side=tk.LEFT)
 
+btnIzracunaj = tk.Button(frmCalculate, text="Izracunaj", command = kalkulisi)
+btnIzracunaj.pack(side=tk.LEFT)
+
+frmCalculate.pack()
 
 frame=tk.Frame(root,width=300,height=300)
-frame.pack(expand=True, fill=tk.BOTH) #.grid(row=0,column=0)
+frame.pack(fill=tk.Y) #.grid(row=0,column=0) expand=True fill=tk.Both
 canvas=tk.Canvas(frame,bg='#FFFFFF',width=300,height=300,scrollregion=(0,0,7000,7000))
 hbar=tk.Scrollbar(frame,orient=tk.HORIZONTAL)
 hbar.pack(side=tk.BOTTOM,fill=tk.X)
@@ -145,13 +161,16 @@ hbar.config(command=canvas.xview)
 vbar=tk.Scrollbar(frame,orient=tk.VERTICAL)
 vbar.pack(side=tk.RIGHT,fill=tk.Y)
 vbar.config(command=canvas.yview)
-canvas.config(width=300,height=300)
+canvas.config(width=700,height=300)
 canvas.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
 
 # text = canvas.create_text(100,10, text="cao\tzz")
 
 
-canvas.pack(side=tk.LEFT,expand=True,fill=tk.BOTH)
+canvas.pack(side=tk.LEFT,expand=True) #fill=tk.BOTH
+
+btnTest = tk.Button(root,text="test")
+btnTest.pack()
 
 root.mainloop()
 
