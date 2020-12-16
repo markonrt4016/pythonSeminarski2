@@ -28,26 +28,15 @@ def binarniIspisBroja(broj, brojBitova):
     for i in range(brojBitova -1, -1, -1):
         if broj & (1 << i):
             binarniBroj += '1'
-            # print('1', end='')
         else:
             binarniBroj += '0'
-            # print('0', end='')
-        # if i % 8 == 0:
-            # binarniBroj += ' '
-            # print(' ', end='')
-    # print(binarniBroj, end='')
+
     return binarniBroj
 
 def ispisiAD_dodatnibit(a, d, dodatniBit, brBita):
     global listaPoruka
     listaPoruka.append(binarniIspisBroja(a, brBita) + ' ' + binarniIspisBroja(d, brBita) + ' ' + str(dodatniBit))
     listaPoruka.append('')
-    # listaPoruka.append(binarniIspisBroja(a, brBita) + ' ' + binarniIspisBroja(d, brBita) + ' ' + str(dodatniBit))
-    # print(' ', end='')
-    # listaPoruka.append(binarniIspisBroja(d, brBita) + ' ')
-    # print(' ', end='')
-    # print(dodatniBit)
-    # listaPoruka.append(dodatniBit)
 
 
 def pisiRezultat():
@@ -79,25 +68,19 @@ def kalkulisi():
 
     listaPoruka.append('A' + ' ' * (brojBita ) + 'D' + ' ' * (brojBita -1) + ' ' + 'dodatni bit')
     listaPoruka.append('')
-    # listaPoruka.append(' ' * 13 + 'A' + ' ' * (brojBita - 1) + 'D' + ' ' * (brojBita - 1) + 'dodatni bit')
-    # print(' ' * 13, 'A', ' ' * (brojBita - 1), 'D', ' ' * (brojBita - 1), 'dodatni bit')
-    # listaPoruka.append(' ' * 13)
 
-    # print(' ' * 13, end='')
+
     ispisiAD_dodatnibit(A, D, dodatniBit, brojBita)
 
     for i in range(brojBita):
-        # print("korak:",'{:>2}'.format(i+1))
         listaPoruka.append("korak:" + str(i+1))
         listaPoruka.append('')
         if (D & 1) == 1 and dodatniBit == 0:
-            # print('{:>13}'.format("sub "), end='')
             listaPoruka.append("sub ")
             listaPoruka.append('')
             A = A - C
             ispisiAD_dodatnibit(A,D,dodatniBit,brojBita)
         if (D & 1) == 0 and dodatniBit == 1:
-            # print('{:>13}'.format("add "),end='')
             listaPoruka.append("add ")
             listaPoruka.append('')
             A = A + C
@@ -117,7 +100,6 @@ def kalkulisi():
 
 
         A = A >> 1
-        # print('{:>13}'.format("shr "), end="")
         listaPoruka.append("shr ")
         listaPoruka.append('')
         ispisiAD_dodatnibit(A,D,dodatniBit,brojBita)
@@ -152,25 +134,63 @@ btnIzracunaj.pack(side=tk.LEFT)
 
 frmCalculate.pack()
 
-frame=tk.Frame(root,width=300,height=300)
-frame.pack(fill=tk.Y) #.grid(row=0,column=0) expand=True fill=tk.Both
-canvas=tk.Canvas(frame,bg='#FFFFFF',width=300,height=300,scrollregion=(0,0,7000,7000))
-hbar=tk.Scrollbar(frame,orient=tk.HORIZONTAL)
+frmCanvas=tk.Frame(root,width=300,height=300)
+canvas=tk.Canvas(frmCanvas,bg='#FFFFFF',width=300,height=300,scrollregion=(0,0,7000,7000))
+hbar=tk.Scrollbar(frmCanvas,orient=tk.HORIZONTAL)
 hbar.pack(side=tk.BOTTOM,fill=tk.X)
 hbar.config(command=canvas.xview)
-vbar=tk.Scrollbar(frame,orient=tk.VERTICAL)
+vbar=tk.Scrollbar(frmCanvas,orient=tk.VERTICAL)
 vbar.pack(side=tk.RIGHT,fill=tk.Y)
 vbar.config(command=canvas.yview)
 canvas.config(width=700,height=300)
 canvas.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
 
-# text = canvas.create_text(100,10, text="cao\tzz")
+canvas.pack(side=tk.LEFT,expand=True, fill=tk.BOTH)
+frmCanvas.pack(fill=tk.Y, side=tk.LEFT)
 
 
-canvas.pack(side=tk.LEFT,expand=True) #fill=tk.BOTH
+#slika:
+from PIL import ImageTk, Image, ImageFilter
 
-btnTest = tk.Button(root,text="test")
-btnTest.pack()
+
+def loadImage():
+    putanjaSlike = "cat.png"
+
+    img = Image.open(putanjaSlike)
+
+    img = img.resize((400, 540), Image.ANTIALIAS)
+
+    return img
+
+img = loadImage()
+
+lblSlika = tk.Label(root)
+lblSlika.pack()
+
+def promeniZamucenost():
+    global img
+    imgFiltrirano = img.filter(ImageFilter.GaussianBlur(radius=float(var.get())))
+    tkImage = ImageTk.PhotoImage(imgFiltrirano)
+
+    global lblSlika
+    lblSlika.config(image=tkImage)
+    lblSlika.image = tkImage
+
+
+var=tk.StringVar()
+
+
+import numpy as np
+
+frmCentrirano = tk.Frame(root)
+
+tk.Label(frmCentrirano,text="Menjaj zamućenost: ").pack(side=tk.LEFT)
+w = tk.Spinbox(frmCentrirano, values=tuple(np.arange(0,10.5, 0.5)), command=promeniZamucenost, textvariable=var, state='readonly', width=4)
+w.pack(side = tk.LEFT)
+
+frmCentrirano.pack()
+
+promeniZamucenost()
 
 root.mainloop()
 
