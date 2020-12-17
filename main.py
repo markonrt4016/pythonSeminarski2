@@ -1,3 +1,5 @@
+import tkinter as tk
+from tkinter import messagebox
 listaPoruka = []
 
 def binarniOblik(broj):
@@ -53,18 +55,26 @@ def kalkulisi():
     D = -999
     A = 0
     dodatniBit = 0
-
+    global listaPoruka
     global dVar, cVar, rezultat
-    C = int(cVar.get())
-    D = int(dVar.get())
-
+    try:
+        C = int(cVar.get())
+        D = int(dVar.get())
+    except:
+        messagebox.showinfo(title="Greska",message="Nepravilan unos brojeva!")
+        listaPoruka.clear()
+        pisiRezultat()
+        return
     rezultat.set(str(C * D))
 
     brBita = max([vratiMinBita(C), vratiMinBita(D)])
 
     brojBita = brBita * 2
 
-    global listaPoruka
+
+    listaPoruka.append('Minimalan broj bita: ' + str(brojBita))
+    for i in range(0,3):
+        listaPoruka.append('')
 
     listaPoruka.append('A' + ' ' * (brojBita ) + 'D' + ' ' * (brojBita -1) + ' ' + 'dodatni bit')
     listaPoruka.append('')
@@ -106,7 +116,6 @@ def kalkulisi():
     pisiRezultat()
 # kalkulisi()
 
-import tkinter as tk
 
 root = tk.Tk()
 root.geometry("1200x600")
